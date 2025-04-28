@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections;
+using System.Drawing;
 
 namespace FlutterBackEnd.Controllers
 {
@@ -59,26 +60,27 @@ namespace FlutterBackEnd.Controllers
         {
             try
             {
-                Console.WriteLine("Updating user id " + id);
+                Console.WriteLine("Updating item id " + id);
 
                 // connect to the database
                 using (MyContext db = new MyContext())
                 {
-                    GroceryModel Color = await db.GroceryItem.FirstOrDefaultAsync(x => x.Id == id);
-                    if (Color == null)
+                    GroceryModel Item = await db.GroceryItem.FirstOrDefaultAsync(x => x.Id == id);
+                    if (Item == null)
                     {
                         Console.WriteLine("Color ID " + id + "not found");
                         return NotFound("Color not found");
                     }
 
-                    Color.name = value.name;
-                    Color.isBought = value.isBought;
+                    Item.name = value.name;
+                    Item.isBought = value.isBought;
+                    Item.createdAt = value.createdAt;
 
 
-                    db.GroceryItem.Update(Color);
+                    db.GroceryItem.Update(Item);
                     await db.SaveChangesAsync();
 
-                    return new ObjectResult(Color);
+                    return new ObjectResult(Item);
                 }
 
             }
@@ -96,14 +98,14 @@ namespace FlutterBackEnd.Controllers
             {
                 using (MyContext db = new MyContext())
                 {
-                    GroceryModel Color = await db.GroceryItem.FirstOrDefaultAsync(x => x.Id == id);
-                    if (Color != null)
+                    GroceryModel Item = await db.GroceryItem.FirstOrDefaultAsync(x => x.Id == id);
+                    if (Item != null)
                     {
-                        Console.WriteLine("deleting item with Id: " + Color.Id);
-                        db.GroceryItem.Remove(Color);
+                        Console.WriteLine("deleting item with Id: " + Item.Id);
+                        db.GroceryItem.Remove(Item);
                         await db.SaveChangesAsync();
                     }
-                    Console.WriteLine("Product didn't exist or was already Deleted");
+                    Console.WriteLine("Item didn't exist or was already Deleted");
                     return new OkResult();
                 }
             }
