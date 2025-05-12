@@ -66,27 +66,28 @@ namespace FlutterBackEnd.Controllers
             {
                 Console.WriteLine("Updating item id " + id);
 
-                // connect to the database
                 using (MyContext db = new MyContext())
                 {
-                    GroceryModel Item = await db.GroceryItem.FirstOrDefaultAsync(x => x.Id == id);
-                    if (Item == null)
+                    GroceryModel item = await db.GroceryItem.FirstOrDefaultAsync(x => x.Id == id);
+                    if (item == null)
                     {
-                        Console.WriteLine("Color ID " + id + "not found");
-                        return NotFound("Color not found");
+                        Console.WriteLine("Item ID " + id + " not found");
+                        return NotFound("Item not found");
                     }
 
-                    Item.name = value.name;
-                    Item.isBought = value.isBought;
-                    Item.createdAt = value.createdAt;
+                    if (value.isBought.HasValue)
+                        item.isBought = value.isBought;
 
+                    if (!string.IsNullOrEmpty(value.name))
+                        item.name = value.name;
 
-                    db.GroceryItem.Update(Item);
+                    if (value.createdAt.HasValue)
+                        item.createdAt = value.createdAt;
+
                     await db.SaveChangesAsync();
 
-                    return new ObjectResult(Item);
+                    return new ObjectResult(item);
                 }
-
             }
             catch (Exception ex)
             {
@@ -94,6 +95,7 @@ namespace FlutterBackEnd.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteItems(Int64 id)
