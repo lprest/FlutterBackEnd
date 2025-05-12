@@ -8,9 +8,11 @@ using System.Drawing;
 
 namespace FlutterBackEnd.Controllers
 {
+    [ApiController]
+    [Route("[controller]")]
     public class GroceryController : ControllerBase
     {
-        [HttpGet("[action]")]
+        [HttpGet]
         public IActionResult GetItems()
         {
             try
@@ -29,7 +31,7 @@ namespace FlutterBackEnd.Controllers
             }
         }
 
-        [HttpPost("[action]")]
+        [HttpPost]
         public async Task<IActionResult> PostItems([FromBody] GroceryModel value)
         {
             try
@@ -40,11 +42,13 @@ namespace FlutterBackEnd.Controllers
 
                     model.name = value.name;
                     model.isBought = value.isBought;
+                    model.createdAt = value.createdAt;
 
 
                     db.GroceryItem.Add(model);
                     await db.SaveChangesAsync();
 
+                    Console.WriteLine("Received: name=" + value.name + ", isBought=" + value.isBought);
                     return new ObjectResult(model);
                 }
             }
@@ -55,7 +59,7 @@ namespace FlutterBackEnd.Controllers
             }
         }
 
-        [HttpPut("[action]/{id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> UpdateItems([FromBody] GroceryModel value, Int64 id)
         {
             try
@@ -91,7 +95,7 @@ namespace FlutterBackEnd.Controllers
             }
         }
 
-        [HttpDelete("[action]/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteItems(Int64 id)
         {
             try
