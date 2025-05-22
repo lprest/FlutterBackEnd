@@ -75,15 +75,12 @@ namespace FlutterBackEnd.Controllers
                         return NotFound("Item not found");
                     }
 
-                    if (value.isBought.HasValue)
-                        item.isBought = value.isBought;
+                    item.name = value.name;
+                    item.isBought = value.isBought;
+                    item.createdAt = DateTime.UtcNow;
 
-                    if (!string.IsNullOrEmpty(value.name))
-                        item.name = value.name;
 
-                    if (value.createdAt.HasValue)
-                        item.createdAt = value.createdAt;
-
+                    db.GroceryItem.Update(item);
                     await db.SaveChangesAsync();
 
                     return new ObjectResult(item);
